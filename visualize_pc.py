@@ -622,7 +622,7 @@ def visualize_pc(cfg: DictConfig):
 
 def plot_path(path, camera_cfg_path, img_num):
     # TODO put this in the config
-    pc_path = "/Users/ryan/Desktop/python/182/carla/cloud.ply"
+    pc_path ="carla/cloud.ply"
     point_cloud = o3d.io.read_point_cloud(pc_path)
     sem_handler = VIPlannerSemMetaHandler()
 

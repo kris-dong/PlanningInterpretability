@@ -1,9 +1,12 @@
 viplanner:
-  model_path: "models"
-  data_path: "carla"
-  camera_cfg_path: "carla/camera_extrinsic.txt"
-  point_cloud_path: "carla/cloud.ply"
-  device: "cpu"
+  model_path: "/scratch/kris/RoboRT_Experiment/checkpoints/"
+  data_path: "/scratch/kris/RoboRT_Experiment/carla/"
+  root_path: "/scratch/kris/RoboRT_Experiment"
+  camera_cfg_path: "/scratch/kris/RoboRT_Experiment/carla/camera_extrinsic.txt"
+
+  # camera_cfg_path: "/scratch/kris/RoboRT_Experiment/carla/pose_data/camera_extrinsic.txt"
+  point_cloud_path: "/scratch/kris/RoboRT_Experiment/carla/cloud.ply"
+  device: "cuda:0"  # Set to device(0)
 
 hydra:
   run:
