@@ -32,7 +32,7 @@ class CostMapPCD:
     ):
         # determine device
         if torch.cuda.is_available() and gpu_id is not None:
-            self.device = torch.device("cuda:" + str(6))
+            self.device = torch.device("cuda:" + str(0))
         else:
             self.device = torch.device("cpu")
 
@@ -197,13 +197,14 @@ class CostMapPCD:
     @classmethod
     def ReadTSDFMap(cls, root_path: str, map_name: str, gpu_id: Optional[int] = None):
         # read config
-        with open(os.path.join(root_path, "maps", "params", f"config_{map_name}.yaml")) as f:
+        config_path = os.path.join(root_path, "maps", "params", "config_cost_map_sem.yaml")
+        with open(config_path) as f:
             cfg: CostMapConfig = CostMapConfig(**yaml.load(f, Loader))
 
         # load data
-        tsdf_array = np.loadtxt(os.path.join(root_path, "maps", "data", map_name + "_map.txt"))
-        viz_points = np.loadtxt(os.path.join(root_path, "maps", "cloud", map_name + "_cloud.txt"))
-        ground_array = np.loadtxt(os.path.join(root_path, "maps", "data", map_name + "_ground.txt"))
+        tsdf_array = np.loadtxt(os.path.join(root_path, "maps", "data", "cost_map_sem_map.txt"))
+        viz_points = np.loadtxt(os.path.join(root_path, "maps", "cloud", "cost_map_sem_cloud.txt"))
+        ground_array = np.loadtxt(os.path.join(root_path, "maps", "data", "cost_map_sem_ground.txt"))
 
         return cls(
             cfg=cfg,

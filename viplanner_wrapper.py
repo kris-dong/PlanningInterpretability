@@ -67,7 +67,7 @@ def transform_goal(CAMERA_CFG_PATH: str, goals: torch.Tensor, image_number: int,
     return goal_cam_frame
 
 class VIPlannerAlgo:
-    def __init__(self, model_dir: str, fear_threshold: float = 0.5, device: str = "cuda", eval=True):
+    def __init__(self, model_dir: str, fear_threshold: float = 0.5, device: str = "cuda:0", eval=True):
         """Apply VIPlanner Algorithm
 
         Args:
@@ -136,7 +136,7 @@ class VIPlannerAlgo:
             print("CUDA not available, VIPlanner will run on CPU")
             self.cuda_avail = False
         else:
-            self.net = self.net.to(self.device)
+            self.net = self.net.to(torch.device("cuda:0"))  # Explicitly move to cuda:0
             self.cuda_avail = True
 
     ###

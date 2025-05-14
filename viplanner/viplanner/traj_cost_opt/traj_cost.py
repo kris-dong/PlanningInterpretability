@@ -222,8 +222,11 @@ class TrajCost:
         return torch.max(oloss_M)
 
     def _compute_oloss(self, world_ps, batch_size):
+        # Use the device of the cost map
+        device = self.cost_map.device
+
         if world_ps.shape[1] == 1:  # special case when evaluating cost of a recorded path
-            world_ps_inflated = world_ps
+            world_ps_inflated = world_ps.to(device)
         else:
             # include robot dimension as square
             tangent = world_ps[:, 1:, 0:2] - world_ps[:, :-1, 0:2]  # get tangent vector
@@ -231,20 +234,21 @@ class TrajCost:
             normals = tangent[:, :, [1, 0]] * torch.tensor(
                 [-1, 1], dtype=torch.float32, device=world_ps.device
             )  # get normal vector
-            world_ps_inflated = torch.vstack([world_ps[:, :-1, :]] * 3)  # duplicate points
+            world_ps_inflated = torch.vstack([world_ps[:, :-1, :]] * 3).to(device)  # duplicate points
             world_ps_inflated[:, :, 0:2] = torch.vstack(
                 [
-                    # movement corners
                     world_ps[:, :-1, 0:2] + normals * self.robot_width / 2,  # front_right
                     world_ps[:, :-1, 0:2],  # center
                     world_ps[:, :-1, 0:2] - normals * self.robot_width / 2,  # front_left
                 ]
-            )
+            ).to(device)
 
-        norm_inds, cost_idx = self.cost_map.Pos2Ind(world_ps_inflated)
+        # Ensure tensors are on the correct device
+        norm_inds, cost_idx = self.cost_map.Pos2Ind(world_ps_inflated.to(device))
 
         # Obstacle Cost
-        cost_grid = self.cost_map.cost_array.T.expand(world_ps_inflated.shape[0], 1, -1, -1)
+        cost_grid = self.cost_map.cost_array.T.expand(world_ps_inflated.shape[0], 1, -1, -1).to(device)
+        norm_inds = norm_inds.to(device)  # Ensure norm_inds is on the correct device
         oloss_M = (
             F.grid_sample(
                 cost_grid,

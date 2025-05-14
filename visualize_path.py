@@ -15,7 +15,7 @@ from viplanner.viplanner.traj_cost_opt.traj_cost import TrajCost
 import utils
 
 import cv2
-import numpy as np
+import np
 
 def visualize_path_on_image(paths, sem_image, original_sem_image=None):
     # Process image as before
@@ -183,8 +183,8 @@ def visualize_path(cfg: DictConfig):
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
-    device = cfg.viplanner.device
-
+    device = "cuda:0"  # Force device to cuda:0
+    root_path = cfg.viplanner.root_path
     img_num = 8
 
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device, eval=False)
@@ -216,7 +216,7 @@ def visualize_path(cfg: DictConfig):
                 w_goal=cfg.w_goal,
                 w_motion=cfg.w_motion,
                 obstalce_thread=cfg.obstacle_thread)
-    traj_cost.SetMap(data_path, cfg.cost_map_name)
+    traj_cost.SetMap(root_path, cfg.cost_map_name)
 
     calc_loss, _ = loss(
         paths,

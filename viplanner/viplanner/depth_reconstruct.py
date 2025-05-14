@@ -15,8 +15,7 @@ from tqdm import tqdm
 
 # imperative-cost-map
 from viplanner.config import ReconstructionCfg, VIPlannerSemMetaHandler
-
-
+    
 class DepthReconstruction:
     """
     Reconstruct 3D Map with depth images, assumes the ground truth camera odom is known
