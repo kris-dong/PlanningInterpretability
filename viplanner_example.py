@@ -5,10 +5,14 @@ from omegaconf import DictConfig
 
 @hydra.main(version_base="1.3", config_path="configs", config_name="config")
 def viplanner_eval(cfg: DictConfig):
+    # Load models
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     # Access configuration parameters
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
+    image_path = cfg.viplanner.image_path
+
     device = cfg.viplanner.device
 
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device)
@@ -16,7 +20,8 @@ def viplanner_eval(cfg: DictConfig):
 
 
     # Load and process images from training data. Need to reshape to add batch dimension in front
-    depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, 8, device)
+    # depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, 8, device)
+    depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model)
 
     # setup goal, also needs to have batch dimension in front
     goals = torch.tensor([137, 111.0, 1.0], device=device).repeat(1, 1)

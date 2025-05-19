@@ -25,7 +25,7 @@ python viplanner/viplanner/depth_reconstruct.py
 NOTE: this seems to run out of memory on Macs, it is also available to download here:
 https://drive.google.com/file/d/1RnQFUz468x2i9e_V1y9PV5hJz6TYA3f3/view?usp=sharing.
 
-After downloading drop this in the `carla` folder
+After downloading drop this in the `carla` folder (0084.png, 0014.png, 0036.png and 0037.png, 0063.png, 0085.png)
 
 Then construct the cost map with
 ```
@@ -62,3 +62,4 @@ python neuron_ablations.py
 ```
 
 These will dump plots into the `plots` folder.
+

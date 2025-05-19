@@ -10,6 +10,7 @@ import open3d as o3d
 from viplanner.viplanner.config import VIPlannerSemMetaHandler
 import viplanner_wrapper
 from PIL import Image
+import os   
 
 def project_points(points_3d, K):
     """
@@ -44,17 +45,19 @@ def visualize_pc(cfg: DictConfig):
     ])
         
     # Access configuration parameters
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
     device = cfg.viplanner.device
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
     img_num = 25
 
     
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device, eval=True)
 
     # Load and process images from training data. Need to reshape to add batch dimension in front
-    depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
 
     # setup goal, also needs to have batch dimension in front
     goals = torch.tensor([319, 266, 1.0], device=device).repeat(1, 1)
@@ -79,7 +82,7 @@ def visualize_pc(cfg: DictConfig):
     image_path = project_points(path_camera, K) 
 
     print("image path: ", image_path)
-    sem_image_file = f"../carla/semantics/0025.png"
+    sem_image_file = f"../Data/semantics/0053.png"
 
     # Load and resize image
     image = Image.open(sem_image_file).convert("RGB")

@@ -1,12 +1,15 @@
 viplanner:
   model_path: "/scratch/kris/RoboRT_Experiment/checkpoints/"
-  data_path: "/scratch/kris/RoboRT_Experiment/carla/"
+  data_path: "/scratch/kris/RoboRT_Experiment/Data/"
   root_path: "/scratch/kris/RoboRT_Experiment"
-  camera_cfg_path: "/scratch/kris/RoboRT_Experiment/carla/camera_extrinsic.txt"
-
-  # camera_cfg_path: "/scratch/kris/RoboRT_Experiment/carla/pose_data/camera_extrinsic.txt"
-  point_cloud_path: "/scratch/kris/RoboRT_Experiment/carla/cloud.ply"
+  # camera_cfg_path: "/scratch/kris/RoboRT_Experiment/carla/camera_extrinsic.txt"
+  image_path: "/scratch/kris/RoboRT_Experiment/Data/rgb/"
+  camera_cfg_path: "/scratch/kris/RoboRT_Experiment/Data/camera_extrinsic.txt"
+  point_cloud_path: "/scratch/kris/RoboRT_Experiment/Data/cloud.ply"
   device: "cuda:0"  # Set to device(0)
+  use_fast_depth: true  # Set to false to use accurate_depth.png
+
+
 
 hydra:
   run:

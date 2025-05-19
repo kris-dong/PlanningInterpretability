@@ -11,7 +11,7 @@ import viplanner_wrapper
 import pickle
 from visualize_pc import visualize_semantic_top_down, get_points_in_fov_with_intrinsics
 from statistical_analysis import find_top_k_weights_indices
-
+import os
 """
 Layers:
 encoder_depth (PlannerNet):
@@ -60,14 +60,18 @@ Recommended Hook Points for Activation Access:
 """
     
 @hydra.main(version_base="1.3", config_path="configs", config_name="config")
+
+
 def neuron_ablations(cfg: DictConfig):
     # Access configuration parameters
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
     device = cfg.viplanner.device
     pc_path = cfg.viplanner.point_cloud_path
-    img_num = 16
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
+    img_num = 53
     # interesting imgs: 46 and 16
 
     indices_file = "data/ground prop_encoder_top_100_weights.pkl"
@@ -77,7 +81,8 @@ def neuron_ablations(cfg: DictConfig):
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device, eval=True)
 
     # Load and process images from training data. Need to reshape to add batch dimension in front
-    depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    # depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
 
     # setup goal, also needs to have batch dimension in front
     # goals = torch.tensor([89.0, 212.6, 0.0], device=device).repeat(1, 1)
@@ -163,6 +168,8 @@ def neuron_ablations(cfg: DictConfig):
 def sweep_ablations(cfg: DictConfig):
 # Access configuration parameters
     model_path = cfg.viplanner.model_path
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
     device = cfg.viplanner.device
@@ -176,7 +183,7 @@ def sweep_ablations(cfg: DictConfig):
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device, eval=True)
 
     # Load and process images from training data. Need to reshape to add batch dimension in front
-    depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
 
     # setup goal, also needs to have batch dimension in front
     # goals = torch.tensor([89.0, 212.6, 0.0], device=device).repeat(1, 1)

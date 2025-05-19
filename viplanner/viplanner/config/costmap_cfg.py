@@ -65,7 +65,7 @@ class ReconstructionCfg:
     # directory where the environment with the depth (and semantic) images is located
     data_dir: str = ""  # e.g. "<path-to-repo>/omniverse/extension/omni.viplanner/data/warehouse"
     # environment name
-    env: str = "carla"  # has to be adjusted
+    env: str = "Data"  # has to be adjusted
     # image suffix
     depth_suffix = ""
     sem_suffix = ""
@@ -150,7 +150,7 @@ class GeneralCostMapConfig:
 
     # path to point cloud
     root_path: str = ""
-    ply_file: str = "carla/cloud.ply"
+    ply_file: str = "Data/cloud.ply"
     # resolution of the cost map
     resolution: float = 0.1  # [m]  (0.04 for matterport, 0.1 for carla)
     # map parameters

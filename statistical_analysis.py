@@ -31,10 +31,12 @@ BATCH_SIZE = 50
 
 
 def get_image_batches(cfg: DictConfig) -> Tuple[torch.tensor, torch.tensor]:
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
     device = cfg.viplanner.device
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
 
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device)
 
@@ -46,10 +48,12 @@ def get_image_batches(cfg: DictConfig) -> Tuple[torch.tensor, torch.tensor]:
     for n in images:
         if n == 42:
             n = 100 # TEMP: Image 42 is of low quality, so swap out for a better image
-        depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, n, device)
-        sem_image = viplanner.transform(sem_image) / 255
-        depth_image = viplanner.input_transformer(depth_image)
-        depth_images.append(depth_image)
+        # depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, n, device)
+        depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
+
+        # sem_image = viplanner.transform(sem_image) / 255
+        # depth_image = viplanner.input_transformer(depth_image)
+        # depth_images.append(depth_image)
         sem_images.append(sem_image)
     depth_img = torch.cat(depth_images, axis=0)
     sem_img = torch.cat(sem_images, axis=0)

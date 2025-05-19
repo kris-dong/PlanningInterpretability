@@ -8,10 +8,10 @@ import utils
 import open3d as o3d
 from viplanner.viplanner.config import VIPlannerSemMetaHandler
 import viplanner_wrapper
-
+import os
 def visualize_semantic_top_down(fov_point_cloud, cam_pos=None, cam_quat=None, resolution=0.1, 
                                height_range=None, sem_handler=None, forward_axis="X+", path=None,
-                               fig_name="Top-Down Semantic View", file_name="plots/top_down_semantic_view.png"):
+                               fig_name="Top-Down Semantic View", file_name="plots/depthanything_plots/top_down_semantic_view.png"):
     """
     Create a top-down semantic map from the point cloud with class legend and camera position
     
@@ -484,23 +484,26 @@ def find_distances_in_fov(pcd_fov, cam_pos, sem_handler, class_name=None, max_di
     
 @hydra.main(version_base="1.3", config_path="configs", config_name="config")
 def visualize_pc(cfg: DictConfig):
-    # Access configuration parameters
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
     device = cfg.viplanner.device
-    pc_path = cfg.viplanner.point_cloud_path
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
     img_num = 32
 
     viplanner = viplanner_wrapper.VIPlannerAlgo(model_dir=model_path, device=device, eval=True)
 
     # Load and process images from training data. Need to reshape to add batch dimension in front
-    depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    # depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+    depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
 
     # setup goal, also needs to have batch dimension in front
-    goals = torch.tensor([268, 129, 0], device=device).repeat(1, 1)
+    goals = torch.tensor([-1.0, -4.0, 0], device=device).repeat(1, 1)
     goals = viplanner_wrapper.transform_goal(camera_cfg_path, goals, img_num, device=device)
     # goals = torch.tensor([5.0, -3, 0], device=device).repeat(1, 1)
+    # goal_point_wf = torch.tensor([-1.0 -4.0, 0], device=device).repeat(1, 1)
+    # goal_point_bf = viplanner_wrapper.transform_goal(camera_cfg_path, goal_point_wf, img_num, device=device)
 
     depth_image = viplanner.input_transformer(depth_image)
     print(f"depth image {depth_image}")
@@ -622,7 +625,7 @@ def visualize_pc(cfg: DictConfig):
 
 def plot_path(path, camera_cfg_path, img_num):
     # TODO put this in the config
-    pc_path ="carla/cloud.ply"
+    pc_path ="Data/cloud.ply"
     point_cloud = o3d.io.read_point_cloud(pc_path)
     sem_handler = VIPlannerSemMetaHandler()
 

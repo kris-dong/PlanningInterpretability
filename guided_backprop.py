@@ -73,11 +73,14 @@ def plot_saliency_map(grad, title, filename):
 @hydra.main(version_base="1.3", config_path="configs", config_name="config")
 def guided_backprop_multi(cfg: DictConfig):
     # Access configuration parameters
+
+    yolo_model, depth_model = viplanner_wrapper.load_models("nano")
     model_path = cfg.viplanner.model_path
     data_path = cfg.viplanner.data_path
     camera_cfg_path = cfg.viplanner.camera_cfg_path
-    point_cloud_path = cfg.viplanner.point_cloud_path
     device = cfg.viplanner.device
+    image_path =  image_path = os.path.join(cfg.viplanner.image_path, "0053.png") 
+    point_cloud_path = cfg.viplanner.point_cloud_path
 
     os.makedirs("plots", exist_ok=True)
 
@@ -142,7 +145,8 @@ def guided_backprop_multi(cfg: DictConfig):
             continue
         
         # Load and process images
-        depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+        # depth_image, sem_image = viplanner_wrapper.preprocess_training_images(data_path, img_num, device)
+        depth_image, sem_image = viplanner_wrapper.preprocess_images(image_path, yolo_model, depth_model, device=device)
         
         # Set up goal
         goals = torch.tensor(goal_point, device=device, dtype=torch.float32).unsqueeze(0)

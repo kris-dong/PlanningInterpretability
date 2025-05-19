@@ -274,11 +274,11 @@ class DepthReconstruction:
 
     def _load_depth_image(self, idx: int) -> np.ndarray:
         # get path to images
-        if self._cfg.high_res_depth:
-            dir_path = os.path.join(self._cfg.get_data_path(), "depth_high_res")
-        else:
-            dir_path = os.path.join(self._cfg.get_data_path(), "depth")
-
+        # if self._cfg.high_res_depth:
+        #     dir_path = os.path.join(self._cfg.get_data_path(), "depth_high_res")
+        # else:
+        dir_path = os.path.join(self._cfg.get_data_path(), "depth")
+        print (f"loading depth image from {dir_path}")
         if os.path.isfile(
             os.path.join(
                 dir_path,
